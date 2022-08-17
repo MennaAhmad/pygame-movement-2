@@ -18,7 +18,7 @@ screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pg.display.set_caption('Test')
 
 # loading background images.
-background_img = pg.image.load('C:/Users/user/PycharmProjects/training_project/assets/background/background.jpg').convert_alpha()
+background_img = pg.image.load('assets/background/background.jpg').convert_alpha()
 # background_img = pg.transform.scale(background_img,(background_img.get_width()*2.4,background_img.get_height() * 2.7))
 ###############################################################################################
 ###############################################################################################
@@ -34,8 +34,8 @@ WIZARD_OFFSET = [112, 107]
 WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
 
 # load spreadsheets.
-warrior_sheet = pg.image.load('C:/Users/user/PycharmProjects/training_project/assets/warrior/warrior.png').convert_alpha()
-wizard_sheet = pg.image.load('C:/Users/user/PycharmProjects/training_project/assets/wizard/wizard.png').convert_alpha()
+warrior_sheet = pg.image.load('assets/warrior/warrior.png').convert_alpha()
+wizard_sheet = pg.image.load('assets/wizard/wizard.png').convert_alpha()
 
 # number of frames in each animation.
 WARRIOR_ANIMATION_FRAMES = [10, 8, 1, 7, 7, 3, 7]
@@ -57,8 +57,8 @@ def draw_bg():
 
 
 # creating objects of class.
-fighter_1 = Fighter(200, 100,  WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_FRAMES)
-fighter_2 = Fighter(700, 100,  WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_FRAMES)
+fighter_1 = Fighter(1, 1, 200, 310,  WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_FRAMES)
+fighter_2 = Fighter(2, 0, 700, 310,  WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_FRAMES)
 
 
 active = True
@@ -76,8 +76,8 @@ while active:
     draw_bg()
 
     # move players.
-    fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT)
-    fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT)
+    fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, fighter_2)
+    fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, fighter_1)
 
     # draw players.
     fighter_1.draw(screen)
@@ -91,6 +91,7 @@ while active:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             active = False
+            pg.quit()
 
     # updates the display of the game.
     pg.display.update()
