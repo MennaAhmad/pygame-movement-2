@@ -3,7 +3,7 @@ import pygame.time
 
 
 class Fighter:
-  def __init__(self, x, y, data, sprite_sheet, animation_steps):
+  def __init__(self, player, flip, x, y, data, sprite_sheet, animation_steps):
     self.rect = pg.Rect((x, y, 80, 180))
     self.size = data[0]  # stores the size values of the character.
     self.image_scale = data[1]  # stores the scale values of the character.
@@ -18,6 +18,10 @@ class Fighter:
     self.jump = False  # stores the jumping state.
     self.attack_type = 0  # stores the type of attack.
     self.attacking = False
+    self.player = player
+    self.flip = flip
+    self.health = 100
+    self.score = 0
 
   # loads the images into a list and scales them up.
   def load_images(self, sprite_sheet, animation_steps):
@@ -32,7 +36,7 @@ class Fighter:
       animation_list.append(temp_img_list)
     return animation_list
 
-  def move(self, screen_width, screen_height):
+  def move(self, screen_width, screen_height, target):
     SPEED = 10
     GRAVITY = 2
     dx = 0  # the change in x coordinates.
@@ -46,23 +50,49 @@ class Fighter:
     key = pg.key.get_pressed()
     # movement horizontal.
     # move left.
-    if self.attacking == False:
-      if key[pg.K_a]:
-        dx = -SPEED
-        self.running = True
-      # move right.
-      if key[pg.K_d]:
-        dx = SPEED
-        self.running = True
-      # moving vertical.
-      if key[pg.K_w] and self.jump == False:
-        self.vel_y = -30
-        self.jump = True
-      # attacks.
-      if key[pg.K_r]:
-        self.attack_type = 1
-      if key[pg.K_t]:
-        self.attack_type = 2
+    
+    if self.attacking == False and self.health > 0:
+        if self.player == 1:
+          if key[pg.K_a]:
+            dx = -SPEED
+            self.running = True
+          # move right.
+          if key[pg.K_d]:
+            dx = SPEED
+            self.running = True
+          # moving vertical.
+          if key[pg.K_w] and self.jump == False:
+            self.vel_y = -30
+            self.jump = True
+            #attack
+          if key[pg.K_r] or key[pg.K_t]:
+              self.attack(target)
+          # determine which attack type was used
+          if key[pg.K_r]:
+            self.attack_type = 1
+          if key[pg.K_t]:
+            self.attack_type = 2
+            
+        if self.player == 2:
+          if key[pg.K_LEFT]:
+            dx = -SPEED
+            self.running = True
+          # move right.
+          if key[pg.K_RIGHT]:
+            dx = SPEED
+            self.running = True
+          # moving vertical.
+          if key[pg.K_UP] and self.jump == False:
+            self.vel_y = -30
+            self.jump = True
+        #attack
+          if key[pg.K_KP1] or key[pg.K_KP2]:
+              self.attack(target)
+          # determine which attack type was used
+          if key[pg.K_KP1]:
+            self.attack_type = 1
+          if key[pg.K_KP2]:
+            self.attack_type = 2
 
     ########################################################################################
     ########################################################################################
@@ -87,7 +117,18 @@ class Fighter:
     # update player position.
     self.rect.x += dx
     self.rect.y += dy
+    
+    if target.rect.centerx > self.rect.centerx:
+      self.flip = False
+    else:
+      self.flip = True
 
+  def attack(self, target):
+    #if self.attack_cooldown == 0:
+      #execute attack
+    self.attacking = True
+    #attacking_rect = pg.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y, 2 * self.rect.width, self.rect.height)
+        
   def update(self):
     # check what action player is performing.
     if self.attacking == True:
@@ -127,5 +168,5 @@ class Fighter:
 
   # draws the players.
   def draw(self, surface):
-    pg.draw.rect(surface, (255, 0, 0), self.rect)
+    self.image = pg.transform.flip(self.image, self.flip, False)
     surface.blit(self.image,(self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
