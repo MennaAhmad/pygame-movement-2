@@ -7,6 +7,11 @@ pg.init()
 clock = pg.time.Clock()
 fps = 60
 
+#define colors
+red=(255,0,0)
+yellow=(255,255,0)
+white=(255,255,255)
+
 # window size.
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
@@ -18,7 +23,7 @@ screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pg.display.set_caption('Test')
 
 # loading background images.
-background_img = pg.image.load('assets/background/background.jpg').convert_alpha()
+background_img = pg.image.load('assets/images/background/background.jpg').convert_alpha()
 # background_img = pg.transform.scale(background_img,(background_img.get_width()*2.4,background_img.get_height() * 2.7))
 ###############################################################################################
 ###############################################################################################
@@ -34,8 +39,8 @@ WIZARD_OFFSET = [112, 107]
 WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
 
 # load spreadsheets.
-warrior_sheet = pg.image.load('assets/warrior/warrior.png').convert_alpha()
-wizard_sheet = pg.image.load('assets/wizard/wizard.png').convert_alpha()
+warrior_sheet = pg.image.load('assets/images/warrior/sprites/warrior.png').convert_alpha()
+wizard_sheet = pg.image.load('assets/images/wizard/sprites/wizard.png').convert_alpha()
 
 # number of frames in each animation.
 WARRIOR_ANIMATION_FRAMES = [10, 8, 1, 7, 7, 3, 7]
@@ -46,6 +51,14 @@ WIZARD_ANIMATION_FRAMES = [8, 8, 1, 8, 8, 3, 7]
 def draw_bg():
     scaled_bg = pg.transform.scale(background_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
     screen.blit(scaled_bg, (0, 0))
+
+
+#function for drawing fighters health bars
+def draw_health_bar(health,x,y):
+    ratio=health/100
+    pg.draw.rect(screen,white,(x-2,y-2,404,34))
+    pg.draw.rect(screen,red,(x,y,400,30))
+    pg.draw.rect(screen,yellow,(x,y,400*ratio,30))
 
 
 ############################################################################################
@@ -69,11 +82,17 @@ active = True
 # controls the boot of the game.
 while active:
 
+
     # calling the set frame rate function.
     clock.tick(fps)
 
     # calling the draw background function.
     draw_bg()
+
+    #show player stats
+    draw_health_bar(fighter_1.health,20,20)
+    draw_health_bar(fighter_2.health,580,20)
+
 
     # move players.
     fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, fighter_2)
